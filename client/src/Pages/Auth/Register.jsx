@@ -54,67 +54,83 @@ const Signup = () => {
     if (password.length > 6) setInputError((pre) => ({ ...pre, password: "" }));
 
     setUserData((pre) => ({ ...pre, [field]: value }));
+
+     setInputError((pre) => ({
+    ...pre,
+    [field]: ""
+  }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (validateForm()) { return; }
+    if (!validateForm()) return;
 
     dispatch(register(userData, navigate))
       .then(() => {
         toast.success("Account Created Successfully. Please Login");
       })
   };
-
+  
+  //When create new Employee, display form validation message(under each field) instead of alert if some fields are empty
   const validateForm = () => {
-    const { firstName, lastName, username, email, phone, password } = userData;
+    let errors = {};
+    let isValid = true;
+    const { firstName, lastName, username, email, phone, password, city } = userData;
 
     if (!firstName) {
-      toast.error('First Name is required')
-      return false;
+      errors.firstName = "First name is required";
+      isValid = false;
     }
     if (firstName.length < 3) {
-      toast.error('First Name should be atleast of 3 characters')
-      return false;
+      errors.firstName = "First name must be at least 3 characters";
+      isValid = false;
     }
     if (!lastName) {
-      toast.error('Last Name is required')
-      return false;
+      errors.lastName = "Last Name is required";
+      isValid = false;
     }
     if (lastName.length < 3) {
-      toast.error('Last Name should be atleast of 3 characters')
-      return false;
+      errors.lastName = "Last Name should be atleast of 3 characters";
+      isValid = false;
     }
     if (!username) {
-      toast.error('Username is required')
-      return false;
+      errors.username = "Username is required"
+      isValid = false;
     }
     if (username.length < 3) {
-      toast.error('Username should be atleast of 3 characters')
-      return false;
+      errors.username = "Username must be at least 3 characters";
+      isValid = false;
     }
-    if (email && !validator.validate(email)) {
-      toast.error('Make sure to provide a valid email')
-      return false;
+    if (!city) {
+      errors.city = "City is required";
+      isValid = false;
+    }
+    if (!email) {
+      errors.email = "Email is required";
+      isValid = false;
+    } else if (!validator.validate(email)) {
+      errors.email = "Invalid email address";
+      isValid = false;
     }
     if (!phone) {
-      toast.error('Phone Number is required')
-      return false;
+      errors.phone = "Phone number is required";
+      isValid = false;
     }
-    if (phone.length < 0) {
-      toast.error('Please provide a valid phone number')
-      return false;
+    if (phone.length < 10) {
+      errors.phone = "Please provide a valid phone number";
+      isValid = false;
     }
     if (!password) {
-      toast.error('Password is required')
-      return false;
+      errors.password = "Password is required";
+      isValid = false;
     }
     if (password.length < 6) {
-      toast.error('Password must be of atleast 6 characters')
-      return false;
+      errors.password = "Password must be at least 6 characters";
+      isValid = false;
     }
-    return true;
+    setInputError(errors);
+    return isValid;
   }
 
   const handleToggleVisibility = (e) => {
@@ -159,6 +175,10 @@ const Signup = () => {
                   className="w-[20rem] h-[40px] px-[8px]"
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
                 />
+                {inputError.firstName && (
+                  <p className="text-red-500 text-sm">{inputError.firstName}</p>
+                )}
+                
                 {/* lastname */}
                 <Input
                   type="text"
@@ -169,6 +189,10 @@ const Signup = () => {
                   className="w-[20rem] h-[40px] px-[8px]"
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
                 />
+                {inputError.lastName && (
+                  <p className="text-red-500 text-sm">{inputError.lastName}</p>
+                )}
+
                 {/* username */}
                 <Input
                   type="text"
@@ -179,6 +203,10 @@ const Signup = () => {
                   className="w-[20rem] h-[40px] px-[8px]"
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
                 />
+                {inputError.username && (
+                  <p className="text-red-500 text-sm">{inputError.username}</p>
+                )}
+
                 {/* city */}
                 <FormControl>
                   <CFormSelect
@@ -193,7 +221,11 @@ const Signup = () => {
                       </option>
                     ))}
                   </CFormSelect>
+                  {inputError.city && (
+                  <p className="text-red-500 text-sm">{inputError.city}</p>
+                )}
                 </FormControl>
+
                 {/* phone */}
                 <Input
                   type="number"
@@ -204,6 +236,9 @@ const Signup = () => {
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
                   className="w-[20rem] h-[40px] px-[8px]"
                 />
+                {inputError.phone && (
+                  <p className="text-red-500 text-sm">{inputError.phone}</p>
+                )}
                 {/* email */}
                 <Input
                   type="email"
@@ -214,6 +249,11 @@ const Signup = () => {
                   className="w-[20rem] h-[40px] px-[8px]"
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
                 />
+                {inputError.email && (
+                  <p className="text-red-500 text-sm">{inputError.email}</p>
+                )}
+
+                {/* Password */}
                 <FormControl>
                   <Input
                     type={showPassword ? "text" : "password"}
@@ -240,6 +280,9 @@ const Signup = () => {
                     }
                   />
                 </FormControl>
+                {inputError.password && (
+                  <p className="text-red-500 text-sm">{inputError.password}</p>
+                )}
               </div>
 
               <button

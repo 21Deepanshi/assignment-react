@@ -26,7 +26,10 @@ const Login = () => {
 
   /////////////////////////////////// FUNCTIONS //////////////////////////////////
   const handleChange = (e) => {
-    setUserData((pre) => ({ ...pre, [e.target.name]: e.target.value }));
+      const { name, value } = e.target;
+
+      setUserData((pre) => ({ ...pre, [name]: value }));
+      setInputError((pre) => ({ ...pre, [name]: "" }));
   };
 
   const handleSubmit = (e) => {
@@ -37,18 +40,22 @@ const Login = () => {
 
     dispatch(login(userData, navigate));
   };
-
+  
   const validateForm = () => {
     const { username, password } = userData;
+    let errors = {};
+    let isValid = true;
+
     if (!username) {
-      toast.error("Username is required");
-      return false;
+      errors.username = "Username is required";
+      isValid = false;
     }
     if (!password) {
-      toast.error("Password is required");
-      return false;
+      errors.password = "Password is required";
+      isValid = false;
     }
-    return true;
+    setInputError(errors);
+    return isValid;
   }
 
   const changeBackgroundColor = () => {
@@ -91,6 +98,11 @@ const Login = () => {
                   className="w-[20rem] h-[40px] px-[8px] font-primary"
                   style={{ fontFamily: "'Montserrat', sans-serif" }}
                 />
+                {inputError.username && (
+                  <p className="text-red-500 text-sm">{inputError.username}</p>
+                )}
+
+                {/* password */}
                 <FormControl>
                   <Input
                     type={showPassword ? "text" : "password"}
@@ -117,6 +129,9 @@ const Login = () => {
                       </InputAdornment>
                     }
                   />
+                  {inputError.password && (
+                    <p className="text-red-500 text-sm">{inputError.password}</p>
+                  )}
                 </FormControl>
               </div>
               <FormGroup>

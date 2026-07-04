@@ -10,6 +10,8 @@ import { getLeadByPhone } from "../redux/action/lead";
 import { format } from "timeago.js";
 import ViewAttachments from "./ViewAttachments";
 import { Empty } from "../Components";
+import { updateLead } from "../redux/api";
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from "@mui/material";
 
 const ClientLeads = () => {
   /////////////////////////////////////////////////////////////////// VARIABLES ///////////////////////////////////////////////////////////////////
@@ -103,6 +105,22 @@ const ClientLeads = () => {
         </div>
       ),
     },
+    {
+      field: "edit",
+      headerName: "Edit",
+      width: 120,
+      headerClassName: "super-app-theme--header",
+      renderCell: (params) => (
+        <Tooltip arrow title="Edit Lead">
+          <button
+            className="text-blue-500 font-semibold hover:text-blue-700"
+            onClick={() => handleEdit(params.row)}
+          >
+            Edit
+          </button>
+        </Tooltip>
+      ),
+    },
   ];
 
   /////////////////////////////////////////////////////////////////// STATES ///////////////////////////////////////////////////////////////////
@@ -115,7 +133,9 @@ const ClientLeads = () => {
     horizontal: "right",
   });
   const { vertical, horizontal, open } = state;
-
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editForm, setEditForm] = useState({});
+  const [updateError, setUpdateError] = useState("");
   /////////////////////////////////////////////////////////////////// USE EFFECTS ///////////////////////////////////////////////////////////////
   useEffect(() => {
     dispatch(getLeadByPhone(phoneNumber));
@@ -133,6 +153,18 @@ const ClientLeads = () => {
   const handleOpenAttachments = (leadId) => {
     setSelectedLeadId(leadId);
     setOpenAttachments(true);
+  };
+  
+  const handleEdit = (row) => {
+    setEditForm({
+      id: row._id,
+      name: row.clientName,
+      phone: row.clientPhone,
+      city: row.city,
+      status: row.status,
+    });
+
+    setOpenEdit(true);
   };
 
 
@@ -189,6 +221,63 @@ const ClientLeads = () => {
                   disableColumnMenu
                   disableSelectionOnClick
                 />
+                <Dialog open={openEdit} onClose={() => setOpenEdit(false)} fullWidth maxWidth="sm">
+                  <DialogTitle>Edit Lead</DialogTitle>
+
+                  <DialogContent className="flex flex-col gap-3 mt-2">
+
+                    <TextField
+                      label="Name"
+                      value={editForm.name || ""}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, name: e.target.value })
+                      }
+                      fullWidth
+                    />
+
+                    <TextField
+                      label="Phone"
+                      value={editForm.phone || ""}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, phone: e.target.value })
+                      }
+                      fullWidth
+                    />
+
+                  </DialogContent>
+
+                  <DialogActions>
+                    <Button onClick={() => setOpenEdit(false)}>Cancel</Button>
+
+                  <Button
+                    variant="contained"
+                    onClick={async () => {
+                      try {
+                        await updateLead(editForm.id, {
+                          clientName: editForm.name,
+                          clientPhone: editForm.phone,
+                          city: editForm.city || "",
+                          status: editForm.status || "new",
+                        });
+
+                        dispatch(getLeadByPhone(phoneNumber));
+                        setOpenEdit(false);
+                        setUpdateError("");
+                      } catch (err) {
+                        console.log("UPDATE ERROR:", err.response?.data || err.message);
+                        setUpdateError(err.response?.data?.message || "Update failed");
+                      }
+                    }}
+                  >
+                    Save
+                  </Button>
+                  {updateError && (
+                    <div className="text-red-600 font-medium mb-2">
+                      {updateError}
+                    </div>
+                  )}
+                  </DialogActions>
+                </Dialog>
               </Box>
             </div>
           )

@@ -106,6 +106,7 @@ const Navbar = ({ setShowSidebar, showSidebar, open, setOpen }) => {
   /////////////////////////////////////////// STATES ////////////////////////////////////////////////
   const [date, setDate] = useState(new Date());
   const [openPasswordChange, setOpenPasswordChange] = useState(false);
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;   //timezone
 
   /////////////////////////////////////////// USE EFFECTS ////////////////////////////////////////////
   useEffect(() => {

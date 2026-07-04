@@ -103,6 +103,7 @@ const ClientNavbar = () => {
   /////////////////////////////////////////// STATES ////////////////////////////////////////////////
   const [date, setDate] = useState(new Date());
   const [openPasswordChange, setOpenPasswordChange] = useState(false);
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   /////////////////////////////////////////// USE EFFECTS ////////////////////////////////////////////
   useEffect(() => {
@@ -131,11 +132,15 @@ const ClientNavbar = () => {
         <div>
           <img className="h-12" src="/background/A-consultant-logo.png" />
         </div>
-
+        
         {/* Center section */}
         <div>
-          <p className="text-sky-400 text-xl gap-1 flex items-center sm:visible invisible">
-            <PiTimerLight className="text-[25px]" /> {date.toLocaleTimeString()}
+          <p className="text-sky-400 text-xl gap-2 flex items-center sm:visible invisible">
+            <PiTimerLight className="text-[25px]" />
+            {date.toLocaleTimeString()}
+            <span className="text-xl text-sky-400 ml-2">
+              ({timeZone})
+            </span>
           </p>
         </div>
 

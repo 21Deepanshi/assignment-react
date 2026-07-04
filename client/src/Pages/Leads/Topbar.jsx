@@ -20,7 +20,7 @@ const Topbar = ({ options, setOptions, isFiltered, setIsFiltered, openFilters, s
   const pathArr = pathname.split("/").filter((item) => item != "");
   const showOptionButtons = !pathArr.includes("create");
   const dispatch = useDispatch();
-
+  
   ////////////////////////////////////////// STATES //////////////////////////////////////
   const [open, setOpen] = useState(false);
   const [scroll, setScroll] = React.useState("paper");
@@ -35,7 +35,7 @@ const Topbar = ({ options, setOptions, isFiltered, setIsFiltered, openFilters, s
       }
     }
   }, [open]);
-
+  
 
   ////////////////////////////////////////// FUNCTIONS //////////////////////////////////////
   const handleSearch = (searchTerm) => {
